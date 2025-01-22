@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>Password Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+    
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+    
+        .nav a {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007BFF;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+    
+        .nav a:hover {
+            background-color: #0056b3;
+            cursor: pointer;
+        }
+    
+        .section {
+            margin-top: 20px;
+        }
+    
+        .hidden {
+            display: none;
+        }
+    
+        .form-group {
+            margin: 15px 0;
+        }
+    
+        .btn {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+    
+        .btn:hover {
+            background-color: #218838;
+            cursor: pointer;
+        }
+    
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    
+        #useful-info p {
+            transition: color 0.3s;
+        }
+    
+        #useful-info p:hover {
+            color: #007BFF;
+        }
+    </style>
+    
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        function generatePassword() {
+            const includeUppercase = document.getElementById('include-uppercase').checked;
+            const includeLowercase = document.getElementById('include-lowercase').checked;
+            const includeNumbers = document.getElementById('include-numbers').checked;
+            const includeSymbols = document.getElementById('include-symbols').checked;
+            const length = parseInt(document.getElementById('password-length').value, 10);
+
+            if (!includeUppercase && !includeLowercase && !includeNumbers && !includeSymbols) {
+                alert('Please select at least one character type.');
+                return;
+            }
+
+            if (length < 1) {
+                alert('Password length must be at least 1.');
+                return;
+            }
+
+            const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+            const numberChars = '0123456789';
+            const symbolChars = '!@#$%^&*()-_=+\\/~?';
+            let characterPool = '';
+
+            if (includeUppercase) characterPool += uppercaseChars;
+            if (includeLowercase) characterPool += lowercaseChars;
+            if (includeNumbers) characterPool += numberChars;
+            if (includeSymbols) characterPool += symbolChars;
+
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * characterPool.length);
+                password += characterPool[randomIndex];
+            }
+
+            document.getElementById('generated-password').textContent = `Generated Password: ${password}`;
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password-input').value;
+
+            if (!password) {
+                alert('Please enter a password.');
+                return;
+            }
+
+            let strengthScore = 0;
+
+            // Criteria for password strength
+            if (password.length >= 8) strengthScore++; // Length of at least 8
+            if (/[A-Z]/.test(password)) strengthScore++; // Contains uppercase letters
+            if (/[a-z]/.test(password)) strengthScore++; // Contains lowercase letters
+            if (/[0-9]/.test(password)) strengthScore++; // Contains numbers
+            if (/[!@#$%^&*()\-_=+\\/~?]/.test(password)) strengthScore++; // Contains symbols
+
+            // Determine password strength based on score
+            let strength = '';
+            if (strengthScore <= 2) {
+                strength = 'Weak';
+            } else if (strengthScore === 3 || strengthScore === 4) {
+                strength = 'Medium';
+            } else if (strengthScore === 5) {
+                strength = 'Strong';
+            }
+
+            document.getElementById('password-strength').textContent = `Password Strength: ${strength}`;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Password Manager</h1>
+
+        <div class="nav">
+            <a href="#" onclick="showSection('password-generator')">Password Generator</a>
+            <a href="#" onclick="showSection('password-checker')">Password Strength Checker</a>
+            <a href="#" onclick="showSection('useful-info')">Useful Information</a>
+        </div>
+
+        <div id="password-generator" class="section">
+            <h2>Password Generator</h2>
+            <form onsubmit="event.preventDefault(); generatePassword();">
+                <div class="form-group">
+                    <label><input type="checkbox" id="include-uppercase"> Include Uppercase Letters</label>
+                    <label><input type="checkbox" id="include-lowercase"> Include Lowercase Letters</label>
+                    <label><input type="checkbox" id="include-numbers"> Include Numbers</label>
+                    <label><input type="checkbox" id="include-symbols"> Include Symbols</label>
+                </div>
+                <div class="form-group">
+                    <label>Password Length:</label>
+                    <input type="number" id="password-length" min="1">
+                </div>
+                <button type="submit" class="btn">Generate Password</button>
+            </form>
+            <div id="generated-password" class="result"></div>
+        </div>
+
+        <div id="password-checker" class="section hidden">
+            <h2>Password Strength Checker</h2>
+            <form onsubmit="event.preventDefault(); checkPasswordStrength();">
+                <div class="form-group">
+                    <label for="password-input">Enter Password:</label>
+                    <input type="text" id="password-input">
+                </div>
+                <button type="submit" class="btn">Check Strength</button>
+            </form>
+            <div id="password-strength" class="result"></div>
+        </div>
+
+        <div id="useful-info" class="section hidden">
+            <h2>Useful Information</h2>
+            <p>Use a minimum password length of 8 or more characters if permitted.</p>
+            <p>Include lowercase and uppercase alphabetic characters, numbers, and symbols if permitted.</p>
+            <p>Generate passwords randomly where feasible.</p>
+            <p>Avoid using the same password twice across multiple accounts.</p>
+            <p>Avoid character repetition, keyboard patterns, dictionary words, letter or number sequences, or personal information.</p>
+        </div>
+    </div>
+</body>
+</html>
