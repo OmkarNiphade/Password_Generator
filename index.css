@@ -86,3 +86,20 @@ form {
 .hidden {
     display: none;
 }
+
+/* Color for strength messages */
+.weak {
+    color: red;
+}
+
+.medium {
+    color: orange;
+}
+
+.strong {
+    color: green;
+}
+
+.very-weak {
+    color: darkred;
+}

@@ -61,22 +61,29 @@
 
             let strength = 'Weak';
             let strengthMessage = '';
+            let strengthClass = 'weak';
 
             if (lengthCriteria && lowercaseCriteria && uppercaseCriteria && numberCriteria && symbolCriteria) {
                 strength = 'Strong';
                 strengthMessage = 'Your password is strong!';
+                strengthClass = 'strong';
             } else if (lengthCriteria && (lowercaseCriteria || uppercaseCriteria) && (numberCriteria || symbolCriteria)) {
                 strength = 'Medium';
                 strengthMessage = 'Your password is medium strength.';
+                strengthClass = 'medium';
             } else if (lengthCriteria) {
                 strength = 'Weak';
                 strengthMessage = 'Your password is weak. Consider adding uppercase letters, numbers, and symbols.';
+                strengthClass = 'weak';
             } else {
                 strength = 'Very Weak';
                 strengthMessage = 'Your password is very weak. Consider adding more characters and a mix of letters, numbers, and symbols.';
+                strengthClass = 'very-weak';
             }
 
-            document.getElementById('password-strength').textContent = `Strength: ${strength} - ${strengthMessage}`;
+            const strengthElement = document.getElementById('password-strength');
+            strengthElement.textContent = `Strength: ${strength} - ${strengthMessage}`;
+            strengthElement.className = 'result ' + strengthClass;
         }
     </script>
 </head>
