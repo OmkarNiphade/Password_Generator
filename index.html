@@ -3,76 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
     <link rel="stylesheet" href="index.css">
-    <title>Password Manager</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-    
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-        }
-    
-        .nav a {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
-            text-decoration: none;
-            color: #fff;
-            background-color: #007BFF;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-    
-        .nav a:hover {
-            background-color: #0056b3;
-            cursor: pointer;
-        }
-    
-        .section {
-            margin-top: 20px;
-        }
-    
-        .hidden {
-            display: none;
-        }
-    
-        .form-group {
-            margin: 15px 0;
-        }
-    
-        .btn {
-            padding: 10px 20px;
-            color: #fff;
-            background-color: #28a745;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-    
-        .btn:hover {
-            background-color: #218838;
-            cursor: pointer;
-        }
-    
-        .result {
-            margin-top: 20px;
-            font-weight: bold;
-        }
-    
-        #useful-info p {
-            transition: color 0.3s;
-        }
-    
-        #useful-info p:hover {
-            color: #007BFF;
-        }
-    </style>
-    
     <script>
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(section => {
@@ -121,42 +53,41 @@
         function checkPasswordStrength() {
             const password = document.getElementById('password-input').value;
 
-            if (!password) {
-                alert('Please enter a password.');
-                return;
-            }
+            const lengthCriteria = password.length >= 8;
+            const lowercaseCriteria = /[a-z]/.test(password);
+            const uppercaseCriteria = /[A-Z]/.test(password);
+            const numberCriteria = /\d/.test(password);
+            const symbolCriteria = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-            let strengthScore = 0;
+            let strength = 'Weak';
+            let strengthMessage = '';
 
-            // Criteria for password strength
-            if (password.length >= 8) strengthScore++; // Length of at least 8
-            if (/[A-Z]/.test(password)) strengthScore++; // Contains uppercase letters
-            if (/[a-z]/.test(password)) strengthScore++; // Contains lowercase letters
-            if (/[0-9]/.test(password)) strengthScore++; // Contains numbers
-            if (/[!@#$%^&*()\-_=+\\/~?]/.test(password)) strengthScore++; // Contains symbols
-
-            // Determine password strength based on score
-            let strength = '';
-            if (strengthScore <= 2) {
-                strength = 'Weak';
-            } else if (strengthScore === 3 || strengthScore === 4) {
-                strength = 'Medium';
-            } else if (strengthScore === 5) {
+            if (lengthCriteria && lowercaseCriteria && uppercaseCriteria && numberCriteria && symbolCriteria) {
                 strength = 'Strong';
+                strengthMessage = 'Your password is strong!';
+            } else if (lengthCriteria && (lowercaseCriteria || uppercaseCriteria) && (numberCriteria || symbolCriteria)) {
+                strength = 'Medium';
+                strengthMessage = 'Your password is medium strength.';
+            } else if (lengthCriteria) {
+                strength = 'Weak';
+                strengthMessage = 'Your password is weak. Consider adding uppercase letters, numbers, and symbols.';
+            } else {
+                strength = 'Very Weak';
+                strengthMessage = 'Your password is very weak. Consider adding more characters and a mix of letters, numbers, and symbols.';
             }
 
-            document.getElementById('password-strength').textContent = `Password Strength: ${strength}`;
+            document.getElementById('password-strength').textContent = `Strength: ${strength} - ${strengthMessage}`;
         }
     </script>
 </head>
 <body>
     <div class="container">
-        <h1>Password Manager Generator</h1>
+        <h1>Password Generator</h1>
 
         <div class="nav">
-            <a href="#" onclick="showSection('password-generator')">Password Generator</a>
-            <a href="#" onclick="showSection('password-checker')">Password Strength Checker</a>
-            <a href="#" onclick="showSection('useful-info')">Useful Information</a>
+            <button onclick="showSection('password-generator')">Password Generator</button>
+            <button onclick="showSection('password-checker')">Password Strength Checker</button>
+            <button onclick="showSection('useful-info')">Useful Information</button>
         </div>
 
         <div id="password-generator" class="section">
@@ -179,12 +110,12 @@
 
         <div id="password-checker" class="section hidden">
             <h2>Password Strength Checker</h2>
-            <form onsubmit="event.preventDefault(); checkPasswordStrength();">
+            <form>
                 <div class="form-group">
                     <label for="password-input">Enter Password:</label>
                     <input type="text" id="password-input">
                 </div>
-                <button type="submit" class="btn">Check Strength</button>
+                <button type="button" class="btn" onclick="checkPasswordStrength()">Check Strength</button>
             </form>
             <div id="password-strength" class="result"></div>
         </div>
